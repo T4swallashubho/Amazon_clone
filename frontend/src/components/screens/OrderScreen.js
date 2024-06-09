@@ -1,33 +1,36 @@
-import React, { useContext, useEffect, useReducer } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
-import { getError } from '../main_components/utils.js';
-import axios from 'axios';
-import Loader from '../main_components/Loader.js';
-import Message from '../main_components/Message.js';
-import { Store } from '../../Store';
-import ListGroup from 'react-bootstrap/ListGroup';
-import CheckoutFormScreen from './CheckoutFormScreen.js';
-import Button from 'react-bootstrap/Button';
-import { toast } from 'react-toastify';
+import React, { useContext, useEffect, useReducer } from "react";
+import { Helmet } from "react-helmet-async";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
+import { getError } from "../main_components/utils.js";
+import axios from "axios";
+import Loader from "../main_components/Loader.js";
+import Message from "../main_components/Message.js";
+import { Store } from "../../Store";
+import ListGroup from "react-bootstrap/ListGroup";
+import CheckoutFormScreen from "./CheckoutFormScreen.js";
+import Button from "react-bootstrap/Button";
+import { toast } from "react-toastify";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'Deliver_Request':
+    case "Deliver_Request":
       return { ...state, loadingDeliver: true };
-    case 'Deliver_Success':
+    case "Deliver_Success":
       return { ...state, loadingDeliver: false, successDeliver: true };
-    case 'Deliver_Fail':
+    case "Deliver_Fail":
       return { ...state, loadingDeliver: false };
-    case 'Deliver_Reset':
+    case "Deliver_Reset":
       return {
         ...state,
         loadingDeliver: false,
         successDeliver: false,
       };
+
+    default:
+      return state;
   }
 };
 
@@ -50,19 +53,19 @@ function OrderScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        cxtDispatch({ type: 'Fetch_Request_Order' });
+        cxtDispatch({ type: "Fetch_Request_Order" });
         const { data } = await axios.get(`/api/orders/${orderId}`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
 
-        cxtDispatch({ type: 'Fetch_Success_Order', payload: data });
+        cxtDispatch({ type: "Fetch_Success_Order", payload: data });
       } catch (err) {
-        cxtDispatch({ type: 'Fetch_Fail_Order', payload: getError(err) });
+        cxtDispatch({ type: "Fetch_Fail_Order", payload: getError(err) });
       }
     };
 
     if (!userInfo) {
-      return navigate('/signin');
+      return navigate("/signin");
     }
 
     if (
@@ -74,10 +77,10 @@ function OrderScreen() {
       fetchData();
 
       if (successDeliver) {
-        dispatch({ type: 'Deliver_Reset' });
+        dispatch({ type: "Deliver_Reset" });
       }
     }
-  }, [userInfo, orderId, navigate, order, successPay, successDeliver]);
+  }, [userInfo, orderId, navigate, order, successPay, successDeliver,cxtDispatch]);
 
   useEffect(() => {
     if (successPay) {
@@ -88,10 +91,10 @@ function OrderScreen() {
             { orderID: order._id, payment },
             { headers: { authorization: `Bearer ${userInfo.token}` } }
           );
-          cxtDispatch({ type: 'Pay_Reset_Order' });
-          toast.success('Order paid successfully');
+          cxtDispatch({ type: "Pay_Reset_Order" });
+          toast.success("Order paid successfully");
         } catch (err) {
-          cxtDispatch({ type: 'Fetch_Fail_Order', payload: getError(err) });
+          cxtDispatch({ type: "Fetch_Fail_Order", payload: getError(err) });
         }
       };
       payResult();
@@ -100,7 +103,7 @@ function OrderScreen() {
 
   const deliverOrderHandler = async () => {
     try {
-      dispatch({ type: 'Deliver_Request' });
+      dispatch({ type: "Deliver_Request" });
       const { data } = await axios.put(
         `/api/orders/${order._id}/deliver`,
         {},
@@ -108,11 +111,11 @@ function OrderScreen() {
           headers: { authorization: `Bearer ${userInfo.token}` },
         }
       );
-      dispatch({ type: 'Deliver_Success', payload: data });
-      toast.success('Order is delivered');
+      dispatch({ type: "Deliver_Success", payload: data });
+      toast.success("Order is delivered");
     } catch (err) {
       toast.error(getError(err));
-      dispatch({ type: 'Deliver_Fail' });
+      dispatch({ type: "Deliver_Fail" });
     }
   };
 
@@ -136,7 +139,7 @@ function OrderScreen() {
                 {order.shippingAddress.fullName}
                 <br />
                 <strong>Address:</strong>
-                {order.shippingAddress.address},{order.shippingAddress.city},{' '}
+                {order.shippingAddress.address},{order.shippingAddress.city},{" "}
                 {order.shippingAddress.postalCode},
                 {order.shippingAddress.country}
                 &nbsp;
@@ -152,7 +155,7 @@ function OrderScreen() {
               </Card.Text>
               {order.isDelivered ? (
                 <Message variant="success">
-                  <strong>Delivered At:</strong>{' '}
+                  <strong>Delivered At:</strong>{" "}
                   {order.deliveredAt.substring(0, 10)}
                 </Message>
               ) : (
@@ -171,7 +174,7 @@ function OrderScreen() {
 
               {order.isPaid ? (
                 <Message variant="success">
-                  {' '}
+                  {" "}
                   <strong>Paid At:</strong> {order.paidAt.substring(0, 10)}
                 </Message>
               ) : (
@@ -193,7 +196,7 @@ function OrderScreen() {
                           src={item.image}
                           alt={item.name}
                           className="img-thumbnail rounded img-fluid"
-                        />{' '}
+                        />{" "}
                         <Link to={`/product/${item.slug}`}>{item.name}</Link>
                       </Col>
 
@@ -243,8 +246,8 @@ function OrderScreen() {
                       <strong>Order Total</strong>
                     </Col>
                     <Col>
-                      {' '}
-                      <strong>${order.totalPrice.toFixed(2)}</strong>{' '}
+                      {" "}
+                      <strong>${order.totalPrice.toFixed(2)}</strong>{" "}
                     </Col>
                   </Row>
                 </ListGroup.Item>

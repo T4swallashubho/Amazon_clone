@@ -141,6 +141,7 @@ function HomeScreen() {
           className="image-home"
           src="\images\ecommerce\HomeScreenImage.png"
           style={{ height: '680px', padding: '0px' }}
+          alt="home"
         />
 
         <div

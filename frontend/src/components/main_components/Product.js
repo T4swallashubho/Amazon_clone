@@ -58,7 +58,7 @@ function Product(props) {
           <strong>${product.price}</strong>
         </Card.Text>
 
-        {product.seller.seller && (
+        {product.seller&& product.seller.seller && (
           <Card.Text>
             {userInfo && userInfo.isSeller ? (
               <Link to={`/seller/${product.seller._id}`}>

@@ -4,56 +4,56 @@ import React, {
   useEffect,
   useRef,
   useState,
-} from 'react';
-import { Link, useParams } from 'react-router-dom';
-import axios from 'axios';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Rating from '../main_components/Rating';
-import Badge from 'react-bootstrap/Badge';
-import Button from 'react-bootstrap/Button';
-import { Helmet } from 'react-helmet-async';
-import Loader from '../main_components/Loader';
-import Message from '../main_components/Message';
-import { getError } from '../main_components/utils';
-import { Store } from '../../Store';
-import { useNavigate } from 'react-router-dom';
-import Form from 'react-bootstrap/Form';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
-import { toast } from 'react-toastify';
-import Card from 'react-bootstrap/Card';
-import PaginatedReview from '../main_components/Pagination/PaginatedReview';
+} from "react";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import ListGroup from "react-bootstrap/ListGroup";
+import Rating from "../main_components/Rating";
+import Badge from "react-bootstrap/Badge";
+import Button from "react-bootstrap/Button";
+import { Helmet } from "react-helmet-async";
+import Loader from "../main_components/Loader";
+import Message from "../main_components/Message";
+import { getError } from "../main_components/utils";
+import { Store } from "../../Store";
+import { useNavigate } from "react-router-dom";
+import Form from "react-bootstrap/Form";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import { toast } from "react-toastify";
+import Card from "react-bootstrap/Card";
+import PaginatedReview from "../main_components/Pagination/PaginatedReview";
 
 function reducer(state, action) {
   // second option that by default is passed to the reducer is action and the first is initial state.
   switch (action.type) {
-    case 'Fetch_Request':
+    case "Fetch_Request":
       return {
         ...state,
         loading: true, // we can show the loading box here
       };
-    case 'Fetch_Success':
+    case "Fetch_Success":
       return {
         ...state,
         loading: false,
         product: action.payload,
       };
-    case 'Fetch_Fail':
+    case "Fetch_Fail":
       return {
         ...state,
         loading: false,
         error: action.payload,
       };
 
-    case 'Create_Request':
+    case "Create_Request":
       return { ...state, loadingCreateReview: true };
-    case 'Create_Success':
+    case "Create_Success":
       return { ...state, loadingCreateReview: false };
-    case 'Create_Fail':
+    case "Create_Fail":
       return { ...state, loadingCreateReview: false };
 
-    case 'Refresh_Product':
+    case "Refresh_Product":
       return { ...state, product: action.payload };
 
     default:
@@ -64,11 +64,11 @@ function reducer(state, action) {
 function ProductScreen() {
   let reviewsRef = useRef();
 
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
 
   // the current selected image.
-  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState("");
 
   const navigate = useNavigate();
   const params = useParams();
@@ -78,7 +78,7 @@ function ProductScreen() {
     useReducer(reducer, {
       product: [],
       loading: true,
-      error: '',
+      error: "",
     });
 
   // here second dispatch renamed for clarity purposes.
@@ -98,67 +98,67 @@ function ProductScreen() {
     const { data } = await axios.get(`/api/products/${product._id}`);
 
     if (data.countInStock < quantity) {
-      window.alert('Sorry. product is out of Stock');
+      window.alert("Sorry. product is out of Stock");
       return;
     }
 
     ctxDispatch({
-      type: 'Cart_Add_item',
+      type: "Cart_Add_item",
       payload: { ...product, quantity },
     });
 
-    navigate('/cart');
+    navigate("/cart");
   };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
     if (!comment || !rating) {
-      toast.error('Comment or rating missing');
+      toast.error("Comment or rating missing");
       return;
     }
 
     try {
-      dispatch({ type: 'Create_Request' });
+      dispatch({ type: "Create_Request" });
       const { data } = await axios.post(
         `/api/products/${product._id}/reviews`,
         { rating, comment, name: userInfo.name },
         { headers: { authorization: `Bearer ${userInfo.token}` } }
       );
 
-      dispatch({ type: 'Create_Success' });
-      toast.success('Review submitted successfully');
+      dispatch({ type: "Create_Success" });
+      toast.success("Review submitted successfully");
 
       product.reviews.unshift(data.review);
       product.numReviews = data.numReviews;
       product.rating = data.rating;
 
-      dispatch({ type: 'Refresh_Product', payload: product });
+      dispatch({ type: "Refresh_Product", payload: product });
       window.scrollTo({
-        behavior: 'smooth',
+        behavior: "smooth",
         top: reviewsRef.current.offsetTop,
       });
     } catch (err) {
       toast.error(getError(error));
-      dispatch({ type: 'Create_Fail' });
+      dispatch({ type: "Create_Fail" });
     }
   };
 
   // repilcating componentDidMount(). Used for running side effects();
   useEffect(() => {
     const fetchData = async () => {
-      dispatch({ type: 'Fetch_Request', loading: true });
+      dispatch({ type: "Fetch_Request", loading: true });
 
       try {
         const result = await axios.get(`/api/products/slug/${slug}`);
         dispatch({
-          type: 'Fetch_Success',
+          type: "Fetch_Success",
           loading: false,
           payload: result.data,
         });
       } catch (err) {
         // here we call fetch data.
-        dispatch({ type: 'Fetch_Fail', payload: getError(err) });
+        dispatch({ type: "Fetch_Fail", payload: getError(err) });
       }
     };
 
@@ -238,9 +238,9 @@ function ProductScreen() {
                 <ListGroup.Item>
                   <Row>
                     <Col>
-                      {' '}
-                      <h6>
-                        Seller:{' '}
+                      {" "}
+                      {/* <h6>
+                        Seller:{" "}
                         {userInfo && userInfo.isSeller ? (
                           <Link to={`/seller/${product.seller._id}`}>
                             {product.seller.seller.name}
@@ -248,16 +248,16 @@ function ProductScreen() {
                         ) : (
                           `${product.seller.seller.name}`
                         )}
-                      </h6>
+                      </h6> */}
                     </Col>
                   </Row>
                   <Row>
-                    <Col>
+                    {/* <Col>
                       <Rating
                         numReviews={product.seller.seller.numReviews}
                         rating={product.seller.seller.rating}
                       />
-                    </Col>
+                    </Col> */}
                   </Row>
                 </ListGroup.Item>
 
@@ -349,7 +349,7 @@ function ProductScreen() {
                 </Form>
               ) : (
                 <Message variant="warning">
-                  Please{' '}
+                  Please{" "}
                   <Link to={`/signin?redirect=/product/${product.slug}`}>
                     SignIn
                   </Link>

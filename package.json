@@ -1,5 +1,6 @@
 {
   "name": "Amazona(Ecommerce_website)",
+  "proxy":"http://localhost:5000/",
   "version": "1.0.0",
   "description": "1. Installed tools on windows\r 2. Configuring VS Code\r 3. Create React app\r 4. Created a Git Repository\r 5. List Products\r    1. create products array\r    2. add product images\r    3. render products\r    4. style products",
   "main": "index.js",

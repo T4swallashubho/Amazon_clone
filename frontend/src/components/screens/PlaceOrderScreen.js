@@ -66,7 +66,7 @@ function PlaceOrderScreen() {
     } else if (!userInfo) {
       navigate('/signin');
     }
-  }, [navigate, cart, userInfo]);
+  }, [navigate, cart, userInfo,paymentMethod]);
 
   const placeOrderHandler = async () => {
     try {

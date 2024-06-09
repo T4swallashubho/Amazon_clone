@@ -1,33 +1,36 @@
-import React, { useContext, useEffect, useReducer, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { useNavigate, useParams } from 'react-router-dom';
-import Loader from '../../main_components/Loader';
-import Message from '../../main_components/Message';
-import axios from 'axios';
-import { Store } from '../../../Store';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Product from '../../main_components/Product';
-import { getError } from '../../main_components/utils';
-import Card from 'react-bootstrap/Card';
-import Rating from '../../main_components/Rating';
+import React, { useContext, useEffect, useReducer } from "react";
+import { Helmet } from "react-helmet-async";
+import { useNavigate, useParams } from "react-router-dom";
+import Loader from "../../main_components/Loader";
+import Message from "../../main_components/Message";
+import axios from "axios";
+import { Store } from "../../../Store";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Product from "../../main_components/Product";
+import { getError } from "../../main_components/utils";
+import Card from "react-bootstrap/Card";
+import Rating from "../../main_components/Rating";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'Fetch_Request': {
+    case "Fetch_Request": {
       return { ...state, loading: true };
     }
-    case 'Fetch_Success': {
+    case "Fetch_Success": {
       return {
         ...state,
         products: action.payload.products,
         loading: false,
-        error: '',
+        error: "",
       };
     }
-    case 'Fetch_Fail': {
+    case "Fetch_Fail": {
       return { ...state, loading: false, error: action.payload };
     }
+
+    default:
+      return { state };
   }
 };
 
@@ -48,23 +51,23 @@ function SellerScreen() {
 
   useEffect(() => {
     if (!userInfo) {
-      navigate('/signin');
+      navigate("/signin");
     }
 
     const sellerProducts = async () => {
       try {
-        dispatch({ type: 'Fetch_Request' });
+        dispatch({ type: "Fetch_Request" });
         const { data } = await axios.get(
           `/api/products?seller=${userInfo._id}`
         );
-        dispatch({ type: 'Fetch_Success', payload: data });
+        dispatch({ type: "Fetch_Success", payload: data });
       } catch (err) {
-        dispatch({ type: 'Fetch_Fail', error: getError(err) });
+        dispatch({ type: "Fetch_Fail", error: getError(err) });
       }
     };
 
     sellerProducts();
-  }, [userInfo]);
+  }, [userInfo, navigate]);
 
   return loading ? (
     <Loader />

@@ -57,7 +57,7 @@ function ChatBox(props) {
         setMessages([...messages, { body: data.body, name: data.name }]);
       });
     }
-  }, [isOpen, messages, socket]);
+  }, [isOpen, messages, socket,userInfo._id, userInfo.name,userInfo.isAdmin]);
 
   const submitHandler = (e) => {
     e.preventDefault();

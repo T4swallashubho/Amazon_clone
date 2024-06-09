@@ -8,8 +8,6 @@ function SellerRouteMain({ children }) {
   return userInfo && userInfo.isSeller ? children : <Navigate to="/signin" />;
 }
 
-{
-  /**Navigate is a component wrapper around useNavigate() hook and is rendered when called with the changed location. It accepts the same arguments in useNavigate() hook as  props*/
-}
+
 
 export default SellerRouteMain;

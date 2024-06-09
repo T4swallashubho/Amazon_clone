@@ -40,7 +40,7 @@ function CheckoutFormScreen(props) {
       }
     };
     fetchPaymentIntent();
-  }, [userInfo]);
+  }, [userInfo, order]);
 
   const cardStyle = {
     hidePostalCode: true,
