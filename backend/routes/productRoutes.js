@@ -116,6 +116,9 @@ productsRoutes.get(
       .sort({ avgrating: -1 })
       .limit(3);
 
+
+      console.log(productByBrand)
+
     res.send(productByBrand);
   })
 );

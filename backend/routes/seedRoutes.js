@@ -14,5 +14,4 @@ seedRouter.get("/", async (req, res) => {
   res.send({ createdProducts, createdUsers });
 });
 
-
 export default seedRouter;

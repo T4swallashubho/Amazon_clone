@@ -159,7 +159,7 @@ function HomeScreen() {
           </span>
         </div>
       </div>
-
+{/* 
       {loadingSellers ? (
         <Loader />
       ) : errorSellers ? (
@@ -187,12 +187,12 @@ function HomeScreen() {
             ))}
           </Carousel>
         </>
-      )}
+      )} */}
 
       <h1>Featured products</h1>
 
       <h5>Top Brands</h5>
-
+{/* 
       <Row>
         {brand &&
           brand.map((item) => (
@@ -212,7 +212,7 @@ function HomeScreen() {
         <>
           <Paginated products={products} itemsPerPage={4} />
         </>
-      )}
+      )} */}
     </>
   );
 }
