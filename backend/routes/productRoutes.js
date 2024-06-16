@@ -1,24 +1,24 @@
-import express from 'express';
-import Product from '../models/Product.js';
-import expressAsyncHandler from 'express-async-handler';
-import { isAdmin, isAuth, isSellerOrAdmin } from '../utils.js';
+import express from "express";
+import Product from "../models/Product.js";
+import expressAsyncHandler from "express-async-handler";
+import { isAdmin, isAuth, isSellerOrAdmin } from "../utils.js";
 const productsRoutes = express.Router();
 
-productsRoutes.get('/', async (req, res) => {
+productsRoutes.get("/", async (req, res) => {
   // filter products only those that seller owns and operates.
 
-  const seller = req.query.seller || '';
+  const seller = req.query.seller || "";
   const searchFilter = seller ? { seller } : {};
   const { page } = req.query;
   const pageSize = 2;
   const products = await Product.find({ ...searchFilter }).populate(
-    'seller',
-    'seller.name seller.logo'
+    "seller",
+    "seller.name seller.logo"
   );
 
   if (page) {
     const products = await Product.find({ ...searchFilter })
-      .populate('seller', 'seller.name seller.logo')
+      .populate("seller", "seller.name seller.logo")
       .skip(pageSize * (page - 1))
       .limit(pageSize);
 
@@ -37,13 +37,13 @@ productsRoutes.get('/', async (req, res) => {
     res.send({ products });
   } else {
     res.status(404).send({
-      message: 'No Products to display',
+      message: "No Products to display",
     });
   }
 });
 
 productsRoutes.put(
-  '/:id',
+  "/:id",
   isAuth,
   isSellerOrAdmin,
   expressAsyncHandler(async (req, res) => {
@@ -79,18 +79,18 @@ productsRoutes.put(
 
       await checkProduct.save();
       res.send({
-        message: 'Product updated successfully',
+        message: "Product updated successfully",
       });
     } else {
       res.send({
-        message: 'Product not found',
+        message: "Product not found",
       });
     }
   })
 );
 
 productsRoutes.delete(
-  '/:id',
+  "/:id",
   isAuth,
   isSellerOrAdmin,
   expressAsyncHandler(async (req, res) => {
@@ -99,68 +99,65 @@ productsRoutes.delete(
 
     if (product) {
       await product.remove();
-      res.send({ message: 'Product deleted successfully' });
+      res.send({ message: "Product deleted successfully" });
     } else {
-      res.status(404).send({ message: 'Product not found' });
+      res.status(404).send({ message: "Product not found" });
     }
   })
 );
 
 productsRoutes.get(
-  '/top-sales-brand',
+  "/top-sales-brand",
   expressAsyncHandler(async (req, res) => {
     //top brand names based on rating
     const productByBrand = await Product.aggregate([
-      { $group: { _id: '$brand', avgrating: { $avg: { $sum: '$rating' } } } },
+      { $group: { _id: "$brand", avgrating: { $avg: { $sum: "$rating" } } } },
     ])
       .sort({ avgrating: -1 })
       .limit(3);
-
-
-      console.log(productByBrand)
 
     res.send(productByBrand);
   })
 );
 
 productsRoutes.post(
-  '/',
+  "/",
   isAuth,
   isSellerOrAdmin,
   expressAsyncHandler(async (req, res) => {
     const newProduct = await Product.create({
-      name: 'sample name ' + Date.now(),
+      name: "sample name " + Date.now(),
       seller: req.user._id,
-      slug: 'sample-slug- ' + Date.now(),
-      category: 'Unknown',
-      image: '/images/p2.jpg',
+      slug: "sample-slug- " + Date.now(),
+      category: "Unknown",
+      image: "/images/p2.jpg",
       price: 0,
       countInStock: 0,
-      brand: 'Unknown',
+      brand: "Unknown",
       rating: 0,
       numReviews: 0,
-      description: 'Sample Description',
+      description: "Sample Description",
     });
 
     const product = await newProduct.save();
 
     res.send({
-      message: 'Product Created successfully',
+      message: "Product Created successfully",
       product,
     });
   })
 );
 
 productsRoutes.get(
-  '/categories',
+  "/categories",
   expressAsyncHandler(async (req, res) => {
-    const categories = await Product.find().distinct('category');
+    const categories = await Product.find().distinct("category");
     res.send(categories);
   })
 );
 
 productsRoutes.get(
-  '/search',
+  "/search",
   expressAsyncHandler(async (req, res) => {
     const PAGE_SIZE = 3;
 
@@ -168,42 +165,42 @@ productsRoutes.get(
 
     const pageSize = query.pageSize || PAGE_SIZE;
     const page = query.page || 1;
-    const category = query.category || '';
-    const price = query.price || '';
-    const searchQuery = query.query || '';
-    const order = query.order || '';
-    const rating = query.rating || '';
+    const category = query.category || "";
+    const price = query.price || "";
+    const searchQuery = query.query || "";
+    const order = query.order || "";
+    const rating = query.rating || "";
 
     // filter starting.
     const queryFilters =
-      searchQuery && searchQuery !== 'all'
+      searchQuery && searchQuery !== "all"
         ? {
             name: {
               $regex: searchQuery,
-              $options: 'i',
+              $options: "i",
             },
           }
         : {};
 
     const categoryFilter =
-      category && category !== 'all'
+      category && category !== "all"
         ? {
             category,
           }
         : {};
 
     const priceFilter =
-      price && price !== 'all'
+      price && price !== "all"
         ? {
             price: {
-              $gte: Number(price.split('-')[0]),
-              $lte: Number(price.split('-')[1]),
+              $gte: Number(price.split("-")[0]),
+              $lte: Number(price.split("-")[1]),
             },
           }
         : {};
 
     const ratingFilter =
-      rating && rating !== 'all'
+      rating && rating !== "all"
         ? {
             rating: {
               $gte: Number(rating),
@@ -212,23 +209,23 @@ productsRoutes.get(
         : {};
 
     const sortOrder =
-      order === 'featured'
+      order === "featured"
         ? {
             featured: -1,
           }
-        : order === 'toprated'
+        : order === "toprated"
         ? {
             rating: -1,
           }
-        : order === 'highest'
+        : order === "highest"
         ? {
             price: -1,
           }
-        : order === 'lowest'
+        : order === "lowest"
         ? {
             price: 1,
           }
-        : order === 'newest'
+        : order === "newest"
         ? {
             createdAt: -1,
           }
@@ -267,7 +264,7 @@ productsRoutes.get(
 );
 
 productsRoutes.get(
-  '/admin',
+  "/admin",
   isAuth,
   isAdmin,
   expressAsyncHandler(async (req, res) => {
@@ -289,40 +286,40 @@ productsRoutes.get(
   })
 );
 
-productsRoutes.get('/slug/:slug', async (req, res) => {
+productsRoutes.get("/slug/:slug", async (req, res) => {
   const product = await Product.findOne({
     slug: req.params.slug,
   }).populate(
-    'seller',
-    'seller.name seller.logo seller.rating seller.numReviews'
+    "seller",
+    "seller.name seller.logo seller.rating seller.numReviews"
   );
 
   if (product) {
     res.send(product);
   } else {
     res.status(404).send({
-      message: 'Oops!! Product Not Found',
+      message: "Oops!! Product Not Found",
     });
   }
 });
 
-productsRoutes.get('/:id', async (req, res) => {
+productsRoutes.get("/:id", async (req, res) => {
   const product = await Product.findById(req.params.id).populate(
-    'seller',
-    'seller.name seller.logo seller.rating seller.numReviews'
+    "seller",
+    "seller.name seller.logo seller.rating seller.numReviews"
   );
 
   if (product) {
     res.send(product);
   } else {
     res.status(404).send({
-      message: 'Oops!! Product Not Found',
+      message: "Oops!! Product Not Found",
     });
   }
 });
 
 productsRoutes.post(
-  '/:id/reviews',
+  "/:id/reviews",
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const productId = req.params.id;
@@ -335,7 +332,7 @@ productsRoutes.post(
       if (product.reviews.find((x) => x.name === req.user.name)) {
         return res
           .status(400)
-          .send({ message: 'You already submitted a review' });
+          .send({ message: "You already submitted a review" });
       }
 
       const review = {
@@ -355,13 +352,13 @@ productsRoutes.post(
       const updatedProduct = await product.save();
 
       res.status(201).send({
-        message: 'Review created',
+        message: "Review created",
         rating: product.rating,
         numReviews: product.numReviews,
         review: updatedProduct.reviews[updatedProduct.reviews.length - 1],
       });
     } else {
-      res.status(404).send({ message: 'Product Not Found' });
+      res.status(404).send({ message: "Product Not Found" });
     }
   })
 );
