@@ -1,11 +1,11 @@
 {
   "name": "Amazona(Ecommerce_website)",
-  "proxy":"http://localhost:5000/",
+  "proxy": "http://localhost:5000/",
   "version": "1.0.0",
   "description": "1. Installed tools on windows\r 2. Configuring VS Code\r 3. Create React app\r 4. Created a Git Repository\r 5. List Products\r    1. create products array\r    2. add product images\r    3. render products\r    4. style products",
   "main": "index.js",
   "scripts": {
-    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build --legacy-peer-deps",
+    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
     "start": "node backend/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/Shubhankar-Sengupta/Amazona-Ecommerce_website-/issues"
   },
-  "homepage": "https://github.com/Shubhankar-Sengupta/Amazona-Ecommerce_website-#readme"
+  "homepage": "https://github.com/Shubhankar-Sengupta/Amazona-Ecommerce_website-#readme",
+  "dependencies": {
+    "axios": "^1.7.2"
+  }
 }
